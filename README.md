@@ -1,0 +1,1 @@
+# Projeto-OperIA-Mall
