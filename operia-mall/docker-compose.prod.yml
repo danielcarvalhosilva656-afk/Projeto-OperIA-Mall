@@ -1,0 +1,62 @@
+# Uso: docker compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env.prod up -d --build
+# Somente o Caddy (HTTPS/TLS) fica exposto. Banco, MinIO, IA e API ficam na rede interna.
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: operia
+      POSTGRES_PASSWORD: operia
+      POSTGRES_DB: operia
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+  ai:
+    build:
+      context: ./ai-service
+      args:
+        WITH_ASR: "false"
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+
+  api:
+    build: ./api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgresql://operia:operia@db:5432/operia
+      - JWT_SECRET=operia-super-secret-jwt-key-2026
+      - NODE_ENV=production
+      - SEED=false
+    depends_on:
+      - db
+      - ai
+
+  web:
+    build:
+      context: ./web
+      args:
+        VITE_API_URL: http://localhost:3000
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

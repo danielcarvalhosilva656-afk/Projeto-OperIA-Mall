@@ -1,0 +1,10 @@
+{$DOMAIN_APP} {
+	encode gzip
+	header Strict-Transport-Security "max-age=31536000"
+	reverse_proxy web:80
+}
+{$DOMAIN_API} {
+	encode gzip
+	header Strict-Transport-Security "max-age=31536000"
+	reverse_proxy api:3000   # inclui upgrade de WebSocket (wss://) automaticamente
+}

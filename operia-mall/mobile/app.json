@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "OperIA Mall",
+    "slug": "operia-mall",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "bundleIdentifier": "br.hackarun.operiamall",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Gravar descrição por áudio da ocorrência.",
+        "NSCameraUsageDescription": "Fotografar a ocorrência."
+      }
+    },
+    "android": {
+      "package": "br.hackarun.operiamall",
+      "permissions": [
+        "RECORD_AUDIO",
+        "CAMERA"
+      ]
+    },
+    "plugins": [
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Fotografar a ocorrência."
+        }
+      ],
+      "expo-notifications"
+    ]
+  }
+}
